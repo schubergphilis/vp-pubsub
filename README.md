@@ -60,6 +60,7 @@ Example of invalid event names
 `VPpubsub.pub` publish a event
 
 #####Parameters:
+
 |  Name | Type | Description 
 | :-|:-:|:-
 |  evnt | string | The event that you want to publish
