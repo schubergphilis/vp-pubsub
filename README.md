@@ -60,12 +60,12 @@ Example of invalid event names
 `VPpubsub.pub` publish a event
 
 #####Parameters:
- Name | Type | Description 
-:-|:-:|:-
- evnt | string | The event that you want to publish
- [data] | * | Data that you want to send along with the event
- [scope] | * | Event scope
- [notAsync=false] | boolean | Events are default asynchronous, but in some cases yo don't want that 
+|  Name | Type | Description 
+| :-|:-:|:-
+|  evnt | string | The event that you want to publish
+| [data] | * | Data that you want to send along with the event
+| [scope] | * | Event scope
+| [notAsync=false] | boolean | Events are default asynchronous, but in some cases yo don't want that 
 
 #####Example
 ```javascript
@@ -91,20 +91,20 @@ You can subscribe to all events with `*`
 
 
 #####Parameters:
- Name | Type | Description 
-:-|:-:|:-
- evnt | string | The event(s) where you want to subscribe to. 
- subscriber | function | The subscriber
- [scope] | * | Scope can be used to only subscribe to events that are in that scope
- [thisArg] | * | The `this` scope  of the subscriber 
+| Name | Type | Description 
+|:-|:-:|:-
+| evnt | string | The event(s) where you want to subscribe to. 
+| subscriber | function | The subscriber
+| [scope] | * | Scope can be used to only subscribe to events that are in that scope
+| [thisArg] | * | The `this` scope  of the subscriber 
 
 
 #####Subscriber parameters
-Name | Type | Description 
-:-|:-:|:-
- data | * | The data send by publishing the event 
- event | string | the event that was published.
- $$sub | function | the subscriber self
+| Name | Type | Description 
+| :-|:-:|:-
+|  data | * | The data send by publishing the event 
+|  event | string | the event that was published.
+|  $$sub | function | the subscriber self
 
 #####Example
 ```javascript
@@ -148,11 +148,11 @@ VPpubsub.sub('*', function (data, evnt, $$sub) {
 Event, subscriber and scope must be the same as when you subscribed.
 
 #####Parameters:
- Name | Type | Description 
-:-|:-:|:-
- evnt | string | Event where from you want to unsubscribe 
- subscriber | function | The subscriber
- [scope] | * | the scope if used by subscribing
+|  Name | Type | Description 
+| :-|:-:|:-
+|  evnt | string | Event where from you want to unsubscribe 
+|  subscriber | function | The subscriber
+|  [scope] | * | the scope if used by subscribing
 
 ####fork
 
