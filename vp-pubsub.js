@@ -114,10 +114,10 @@ limitations under the License.
                         //check of subscriber still exits
                         if (!subscriber[1] || subscriber[1] === scope) {
                             if (notAsync) {
-                                subscriber[0].call(subscriber[3], data, originEvent, subscriber[0]);
+                                subscriber[0].call(subscriber[2], data, originEvent, subscriber[0]);
                             } else {
                                 setTimeout(function () {
-                                    subscriber[0].call(subscriber[3], data, originEvent, subscriber[0]);
+                                    subscriber[0].call(subscriber[2], data, originEvent, subscriber[0]);
                                 }, 5);
                             }
                         }
@@ -196,7 +196,6 @@ limitations under the License.
                         pubIndex = subscribers[parseEvnt].push([
                             subscriber,
                             scope,
-                            subscriber,
                             thisArg
                         ]);
                         //is published check
@@ -219,11 +218,15 @@ limitations under the License.
              * @param  {*}          [scope]    the scope if used by subscribing
              */
             unsub: function (evnt, subscriber, scope) {
-                _.each(subscribers[evnt], function (sub, i) {
-                    if (sub[2] === subscriber && (!sub[1] || sub[1] === scope)) {
-                        subscribers[evnt].splice(i, 1);
+                var eventSubs = subscribers[evnt] || [];
+                for (var i = 0, max  = eventSubs.length; i < max; i++) {
+                    if (eventSubs[i][0] === subscriber && (!eventSubs[i][1] || eventSubs[i][1] === scope)) {
+                        eventSubs.splice(i, 1);
+                        //index changed
+                        i--;
+                        max--;
                     }
-                });
+                }
             }
         });
     }
