@@ -10,9 +10,6 @@
     "pubsub"
   ],
   "license": "Apache License v2.0",
-  "dependencies": {
-    "underscore": "~1.6"
-  },
   "ignore": [
     "**/.*",
     "node_modules",
