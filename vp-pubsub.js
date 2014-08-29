@@ -38,6 +38,23 @@ limitations under the License.
     var validSubscribe = /^!?(\*$|[a-z])([a-z0-9]*)(\.([a-z0-9]+|\*$))*(@[0-9]+)?$/,
         validPublish = /^[a-z]([a-z0-9]*)(\.[a-z0-9]+)*(@[0-9]+)?$/;
     /**
+     * Array indexOf for IE8
+     * @param  {Array} arr
+     * @param  {*} needed
+     * @return {Number}
+     */
+    function indexOf(arr, needed) {
+        if (arr.indexOf) {
+            return arr.indexOf(needed);
+        }
+        for (var i = 0, max = arr.length; i < max; i++) {
+            if (arr[i] === needed) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    /**
      * VPpubsub module
      */
     function VPpubsub () {
@@ -70,7 +87,7 @@ limitations under the License.
                         };
                     }
                     //get event scope index
-                    scopeIndex = _.indexOf(published[evnt].scopes, scope);
+                    scopeIndex = indexOf(published[evnt].scopes, scope);
                     if (~scopeIndex) {
                         scopeIndex = published[evnt].scopes.push(scope) - 1;
                     }
@@ -110,18 +127,19 @@ limitations under the License.
                         subs = subs.concat(subscribers['*']);
                     }
                     //start publishing
-                    _.each(subs, function (subscriber) {
-                        //check of subscriber still exits
-                        if (!subscriber[1] || subscriber[1] === scope) {
+                    for (var x = 0, xmax = subs.length; x < xmax; x++) {
+                        if (!subs[0][1] || subs[0][1] === scope) {
                             if (notAsync) {
-                                subscriber[0].call(subscriber[2], data, originEvent, subscriber[0]);
+                                subs[0][0].call(subs[0][2], data, originEvent, subs[0][0]);
                             } else {
+                                /* jshint ignore:start */
                                 setTimeout(function () {
-                                    subscriber[0].call(subscriber[2], data, originEvent, subscriber[0]);
+                                    subs[0][0].call(subs[0][2], data, originEvent, subs[0][0]);
                                 }, 5);
+                                /* jshint ignore:end */
                             }
                         }
-                    });
+                    }
                 }
             },
             /**
@@ -156,7 +174,7 @@ limitations under the License.
                     if (!~evnt.indexOf('*')) {
                         //check of event already is published for this scope
                         if (published[evnt]) {
-                            index = _.indexOf(published[evnt].scopes, scope);
+                            index = indexOf(published[evnt].scopes, scope);
                         }
                     } else {
                         //rewrite event to regex
@@ -167,7 +185,7 @@ limitations under the License.
                         //find event based on regex
                         for (orgEvent in published) {
                             if (evnt.test(orgEvent)) {
-                                index = _.indexOf(published[orgEvent].scopes, scope);
+                                index = indexOf(published[orgEvent].scopes, scope);
                                 break;
                             }
                         }
@@ -227,17 +245,11 @@ limitations under the License.
                         max--;
                     }
                 }
+            },
+            fork: function () {
+                return VPpubsub();
             }
         });
     }
-    //return the API
-    return _.extend(VPpubsub(), {
-        /**
-         * Returns a VPpubsub with his own subscribers 
-         * @return {VPpubsub} [description]
-         */
-        fork: function () {
-            return VPpubsub();
-        }
-    });
+    return VPpubsub();
 });

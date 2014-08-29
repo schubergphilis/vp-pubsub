@@ -2,8 +2,6 @@ VP PubSub
 ======
 VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscribe) library that supports [message filtering](http://en.wikipedia.org/wiki/Publish–subscribe_pattern#Message_filtering)
 
-##Requirements
-* [underscorejs](https://github.com/jashkenas/underscore)
 
 ##Install
 
@@ -11,7 +9,6 @@ VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscrib
 
 ####Basic
 ```html
-<script type="text/javascript" src="underscore.js"></script>
 <script type="text/javascript" src="vp-pubsub.js"></script>
 ```
 
@@ -19,16 +16,7 @@ VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscrib
 ```javascript
 require.config({
     paths: {
-        'vp-pubsub': 'vp-pubsub',
-        'underscore': 'underscore'
-    },
-    shim: {
-        'underscore': {
-            exports: '_'
-        },
-        'vp-pubsub': {
-            deps: ['underscore']
-        }
+        'vp-pubsub': 'vp-pubsub'
     }
 });
 ```
