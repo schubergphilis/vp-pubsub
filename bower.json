@@ -1,7 +1,7 @@
 {
   "name": "vp-pubsub",
   "main": "vp-pubsub.js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "authors": [
     "Victor Verhaagen <vverhaagen@schubergphilis.com>"
   ],

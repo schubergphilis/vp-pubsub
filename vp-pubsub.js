@@ -12,29 +12,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-(function (VPpubsub) {
+/* globals bootstrap, ses */
+(function (vpPubsub) {
+    /* jshint strict: false*/
     // Montage Require
-    if (typeof bootstrap === "function") {
-        bootstrap("promise", VPpubsub);
+    if (typeof bootstrap === 'function') {
+        bootstrap('promise', vpPubsub);
     // CommonJS
-    } else if (typeof exports === "object") {
-        module.exports = VPpubsub();
+    } else if (typeof exports === 'object') {
+        module.exports = vpPubsub();
     // RequireJS
-    } else if (typeof define === "function" && define.amd) {
-        define(VPpubsub);
+    } else if (typeof define === 'function' && define.amd) {
+        define(vpPubsub);
     // SES (Secure EcmaScript)
-    } else if (typeof ses !== "undefined") {
+    } else if (typeof ses !== 'undefined') {
         if (!ses.ok()) {
             return;
         } else {
-            ses.makeVPpubsub = VPpubsub;
+            ses.makeVPpubsub = vpPubsub;
         }
     // <script>
     } else {
-        window.VPpubsub = VPpubsub();
+        window.VPpubsub = vpPubsub();
     }
 })(function () {
-    "use strict";
+    /* jshint newcap: false */
+    'use strict';
     var validSubscribe = /^!?(\*$|[a-z])([a-z0-9]*)(\.([a-z0-9]+|\*$))*(@[0-9]+)?$/,
         validPublish = /^[a-z]([a-z0-9]*)(\.[a-z0-9]+)*(@[0-9]+)?$/;
     /**
@@ -94,6 +97,13 @@ limitations under the License.
                     //update / add last called data to event scope
                     published[evnt].data[scopeIndex] = data;
                 }
+                function callAsync(sub, scope, data, originEvent) {
+                    setTimeout(function () {
+                        if (sub.$$VPpubsubRemoved !== originEvent) {
+                            sub.call(scope, data, originEvent, sub);
+                        }
+                    }, 5);
+                }
                 //is event valid
                 if (validPublish.test(evnt)) {
                     //subscriber with id
@@ -128,15 +138,11 @@ limitations under the License.
                     }
                     //start publishing
                     for (var x = 0, xmax = subs.length; x < xmax; x++) {
-                        if (!subs[0][1] || subs[0][1] === scope) {
+                        if (!subs[x][1] || subs[x][1] === scope) {
                             if (notAsync) {
-                                subs[0][0].call(subs[0][2], data, originEvent, subs[0][0]);
+                                subs[x][0].call(subs[x][2], data, originEvent, subs[x][0]);
                             } else {
-                                /* jshint ignore:start */
-                                setTimeout(function () {
-                                    subs[0][0].call(subs[0][2], data, originEvent, subs[0][0]);
-                                }, 5);
-                                /* jshint ignore:end */
+                                callAsync(subs[x][0], subs[x][2], data, originEvent);
                             }
                         }
                     }
@@ -181,7 +187,7 @@ limitations under the License.
                         evnt = new RegExp('^' +
                                 evnt.substr(0, evnt.length - 2)
                                 .replace('.', '\\.') +
-                                "(?![a-zA-Z0-9])");
+                                '(?![a-zA-Z0-9])');
                         //find event based on regex
                         for (orgEvent in published) {
                             if (evnt.test(orgEvent)) {
@@ -210,6 +216,7 @@ limitations under the License.
                         if (!subscribers[parseEvnt]) {
                             subscribers[parseEvnt] = [];
                         }
+                        delete subscriber.$$VPpubsubRemoved;
                         //add subscriber
                         pubIndex = subscribers[parseEvnt].push([
                             subscriber,
@@ -223,11 +230,21 @@ limitations under the License.
                     }
                 }
             },
+            /**
+             * Subscribe once to an event
+             * @param  {String} evnt       you can't subscribe to a channel ( * )
+             * @param  {[type]} subscriber
+             * @param  {[type]} scope
+             * @param  {[type]} thisArg
+             */
             subonce: function (evnt, subscriber, scope, thisArg) {
-                api.sub(evnt, function (data, evnt, $$sub) {
-                    api.unsub(evnt, $$sub, scope);
-                    subscriber.call(thisArg, data, evnt, subscriber);
-                }, scope, thisArg);
+                //you can't use *
+                if (!~evnt.indexOf('*')) {
+                    api.sub(evnt, function (data, evnt, $$sub) {
+                        api.unsub(evnt, $$sub, scope);
+                        subscriber.call(thisArg, data, evnt, subscriber);
+                    }, scope, thisArg);
+                }
             },
             /**
              * Unsubscribe a subscriber from a event
@@ -239,6 +256,7 @@ limitations under the License.
                 var eventSubs = subscribers[evnt] || [];
                 for (var i = 0, max  = eventSubs.length; i < max; i++) {
                     if (eventSubs[i][0] === subscriber && (!eventSubs[i][1] || eventSubs[i][1] === scope)) {
+                        subscriber.$$VPpubsubRemoved = evnt;
                         eventSubs.splice(i, 1);
                         //index changed
                         i--;
