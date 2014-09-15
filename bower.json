@@ -1,7 +1,7 @@
 {
   "name": "vp-pubsub",
   "main": "vp-pubsub.js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "authors": [
     "Victor Verhaagen <vverhaagen@schubergphilis.com>"
   ],
@@ -9,6 +9,13 @@
   "keywords": [
     "pubsub"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:schubergphilis/vp-pubsub.git"
+  },
+  "homepage": {
+    "https://github.com/schubergphilis/vp-pubsub"
+  },
   "license": "Apache License v2.0",
   "ignore": [
     "**/.*",

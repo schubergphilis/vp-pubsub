@@ -121,10 +121,6 @@ limitations under the License.
                     //wild card
                     evnt = evnt.split('.');
                     evntPart = evnt[0];
-                    //first level name space
-                    if (subscribers[evntPart + '.*']) {
-                        subs = subs.concat(subscribers[evntPart]);
-                    }
                     //all other levels
                     for (var i = 1, max = evnt.length; i < max; i++) {
                         if (subscribers[evntPart + '.*']) {
