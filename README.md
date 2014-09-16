@@ -3,25 +3,31 @@ VP PubSub
 VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscribe) library that supports [message filtering](http://en.wikipedia.org/wiki/Publish–subscribe_pattern#Message_filtering)
 
 
-##Install
+## Getting Started
 
-###Include
+### Install
 
-####Basic
+#### bower
+`bower install vp-pubsub  --save-dev`
+
+#### git
+`git clone https://github.com/schubergphilis/vp-pubsub.git`
+
+### Include
+
+#### Basic
 ```html
 <script type="text/javascript" src="vp-pubsub.js"></script>
 ```
 
-####Require js
+#### AMD
 ```javascript
-require.config({
-    paths: {
-        'vp-pubsub': 'vp-pubsub'
-    }
-});
+define(['/bower_components/vp-pubsub/vp-pubsub'], function (PubSub) {
+
+})
 ```
 
-##API
+## API
 
 Event names have some restrictions.
 
@@ -43,11 +49,11 @@ Example of invalid event names
 -   a.
 -   a#$
 
-####pub
+#### pub
 
 `VPpubsub.pub` publish a event
 
-#####Parameters:
+##### Parameters:
 
 
 
@@ -58,7 +64,7 @@ evnt | string | The event that you want to publish
 [scope] | * | Event scope
 [notAsync=false] | boolean | Events are default asynchronous, but in some cases yo don't want that 
 
-#####Example
+##### Example
 ```javascript
 //publish an event without data
 VPpubsub.pub('foo');
@@ -70,7 +76,7 @@ VPpubsub.pub('foo', "test", window);
 VPpubsub.pub('foo', "test", window, true);
 ```
 
-####sub
+#### sub
 
 `VPpubsub.sub` Subscribe to a event
 
@@ -81,7 +87,7 @@ You can subscribe to event in the same namespace by using `*`. example:
 You can subscribe to all events with `*`
 
 
-#####Parameters:
+##### Parameters:
 
 Name | Type | Description 
 ---| --- | ---
@@ -91,7 +97,7 @@ subscriber | function | The subscriber
 [thisArg] | * | The `this` scope  of the subscriber 
 
 
-#####Subscriber parameters
+##### Subscriber parameters
 
 Name | Type | Description 
 ---| --- | ---
@@ -130,17 +136,17 @@ VPpubsub.sub('*', function (data, evnt, $$sub) {
 });
 ```
 
-####subonce
+#### subonce
 
 `VPpubsub.subonce` same as `sub` only it will subscribes once to the event
 
-####unsub
+#### unsub
 
 `VPpubsub.unsub` unsubscribe from a event
 
 Event, subscriber and scope must be the same as when you subscribed.
 
-#####Parameters:
+##### Parameters:
 
 Name | Type | Description 
 ---| --- | ---
@@ -148,6 +154,6 @@ evnt | string | Event where from you want to unsubscribe
 subscriber | function | The subscriber
 [scope] | * | the scope if used by subscribing
 
-####fork
+#### fork
 
 `VPpubsub.fork` returns a VPpubsub with his own subscribers
