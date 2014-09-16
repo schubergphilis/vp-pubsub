@@ -157,3 +157,126 @@ subscriber | function | The subscriber
 #### fork
 
 `VPpubsub.fork` returns a VPpubsub with his own subscribers
+
+
+## Tips
+
+### Unique events
+
+#### Problem
+If you've a set up as bellow, than module A and module B will always have the result of both request and that is probably not what you want.
+
+```javascript
+//module A
+VPpubsub.sub('message.result', function (result) {
+    console.log(result)
+})
+VPpubsub.pub('message.get', {
+    type: 'error'
+});
+
+//module B
+VPpubsub.sub('message.result', function (result) {
+    console.log(result)
+})
+VPpubsub.pub('message.get');
+
+//module log message
+VPpubsub.sub('message.result', function (result) {
+    console.log(result)
+})
+
+//module Message
+VPpubsub.sub('message.get', function (filter) {
+    VPpubsub.pub('message.result', [])
+})
+```
+
+#### Solution 1 ( channels )
+One way to fix this is to use the channel filter as used below.
+
+```javascript
+//module A
+VPpubsub.sub('message.result.moduleA', function (result) {
+    console.log(result)
+})
+VPpubsub.pub('message.get.moduleA', {
+    type: 'error'
+});
+
+//module B
+VPpubsub.sub('message.result.moduleB', function (result) {
+    console.log(result)
+})
+VPpubsub.pub('message.get.moduleB');
+
+//module log message
+VPpubsub.sub('message.result.*', function (result) {
+    console.log(result)
+})
+
+//module Message
+VPpubsub.sub('message.get.*', function (filter, evnt) {
+    var id = evnt.split('.').splice(2).join('.'),
+        resultEvent = 'message.result';
+    if (id) {
+        resultEvent += '.' + id;
+    }
+    VPpubsub.pub(resultEvent, [])
+})
+```
+
+#### Solution 2 ( ID's )
+Another way to fix this is to use event ID's. 
+You can subscribe and publish an event with a ID.
+Subscribers that are subscripted to events with a ID will only be triggered if the ID match, all other subscribers for that event, include channel subscribers will be triggered normally.
+
+You can give an event a ID via adding a `@` to the event name for example `message.get@myid`.
+a Event ID can only exists of 0-9 and a-z characters.
+To give a example of when what is triggered
+
+```
+- publish without ID
+pub: message.get
+sub: message.get        //triggered
+sub: message.get@myid   //not triggered
+sub: message.get.*      //triggered
+- publish with ID
+pub: message.get@myid
+sub: message.get        //triggered
+sub: message.get@myid   //triggered
+sub: message.get.*      //triggered
+```
+
+the solution with id would like this
+
+```javascript
+//module A
+VPpubsub.sub('message.result@moduleA', function (result) {
+    console.log(result)
+})
+VPpubsub.pub('message.get@moduleA', {
+    type: 'error'
+});
+
+//module B
+VPpubsub.sub('message.result@moduleB', function (result) {
+    console.log(result)
+})
+VPpubsub.pub('message.get@moduleB');
+
+//module log message
+VPpubsub.sub('message.result', function (result) {
+    console.log(result)
+})
+
+//module Message
+VPpubsub.sub('message.get', function (filter, evnt) {
+    var id = evnt.split('@')[1],
+        resultEvent = 'message.result';
+    if (id) {
+        resultEvent += '@' + id;
+    }
+    VPpubsub.pub(resultEvent, [])
+})
+```
