@@ -38,8 +38,8 @@ limitations under the License.
 })(function () {
     /* jshint newcap: false */
     'use strict';
-    var validSubscribe = /^!?(\*$|[a-z])([a-z0-9]*)(\.([a-z0-9]+|\*$))*(@[0-9]+)?$/,
-        validPublish = /^[a-z]([a-z0-9]*)(\.[a-z0-9]+)*(@[0-9]+)?$/;
+    var validSubscribe = /^!?(\*$|[a-z])([a-z0-9]*)(\.([a-z0-9]+|\*$))*(@[0-9a-z]+)?$/,
+        validPublish = /^[a-z]([a-z0-9]*)(\.[a-z0-9]+)*(@[0-9a-z]+)?$/;
     /**
      * Array indexOf for IE8
      * @param  {Array} arr
