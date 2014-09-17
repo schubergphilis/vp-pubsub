@@ -16,6 +16,8 @@ VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscrib
     - [subonce](#subonce)
     - [fork](#fork)
 -   [Tips](#tips)
+    - [Unique events](#unique-events)
+    - [is published ?](#is-published-)
 
 ## Getting Started
 
