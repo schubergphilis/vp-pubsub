@@ -2,6 +2,20 @@ VP PubSub
 ======
 VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscribe) library that supports [message filtering](http://en.wikipedia.org/wiki/Publish–subscribe_pattern#Message_filtering)
 
+## Index
+
+-   [Install](#install)
+    - [bower](#bower)
+    - [git](#git)
+-   [Include](#include)
+    - [Basic](#basic)
+    - [AMD](#amd)
+-   [API](#API)
+    - [pub](#pub)
+    - [sub](#sub)
+    - [subonce](#subonce)
+    - [fork](#fork)
+-   [Tips](#tips)
 
 ## Getting Started
 
@@ -81,11 +95,10 @@ VPpubsub.pub('foo', "test", window, true);
 `VPpubsub.sub` Subscribe to a event
 
 You can subscribe to multiple events by separating the event with `|`.
-You can subscribe to event in the same namespace by using `*`. example: 
+You can subscribe to event in the same namespace by using `*` (channel filter). example: 
 `foo.*` will trigger the subscriber by the event `foo` but also every event that starts with the name space `foo` like `foo.bar`
 
 You can subscribe to all events with `*`
-
 
 ##### Parameters:
 
@@ -138,7 +151,7 @@ VPpubsub.sub('*', function (data, evnt, $$sub) {
 
 #### subonce
 
-`VPpubsub.subonce` same as `sub` only it will subscribes once to the event
+`VPpubsub.subonce` same as `sub` only it will subscribes once to the event, with on limitation you can not subscribe to a channel (`*`)
 
 #### unsub
 
@@ -279,4 +292,88 @@ VPpubsub.sub('message.get', function (filter, evnt) {
     }
     VPpubsub.pub(resultEvent, [])
 })
+```
+
+### is published ?
+
+#### Problem
+If you've a set up as bellow, than event `module.a.api` will never be published because event `module.a.ready` was already published before module B was subscribing on it.
+
+```javascript
+//module A
+define('module/a', ['vp-pubsub'], function (PubSub) {
+    PubSub.sub('module.a.api', function (data) {
+        console.log(data)
+    })
+    PubSub.pub('module.a.ready');
+});
+
+//module B
+define('module/b', ['vp-pubsub'], function (PubSub) {
+    PubSub.subonce('module.a.ready', function () {
+        PubSub.pub('module.a.api', {filter: 1});
+    })
+});
+
+require(['module/a', 'module/b'])
+```
+
+#### Solution 1 ( multiple events ) 
+One way to fix this is to introduce a extra event where you request of the module is ready that then re-publish the ready event.
+In this way it does not matter of module A or module B is first loaded.
+
+```
+- first load module A
+loading module A (pub: module.a.ready) > loading module B > pub: module.a.isready > pub: module.a.ready > pub: module.a.api
+- first load module B
+loading module B (pub: module.a.isready) > loading module A > pub: module.a.ready > pub: module.a.api
+```
+
+```javascript
+//module A
+define('module/a', ['vp-pubsub'], function (PubSub) {
+    PubSub.sub('module.a.api', function (data) {
+        console.log(data)
+    });
+    PubSub.sub('module.a.isready', function () {
+        PubSub.pub('module.a.ready');
+    });
+    PubSub.pub('module.a.ready');
+});
+
+//module B
+define('module/b', ['vp-pubsub'], function (PubSub) {
+    PubSub.subonce('module.a.ready', function () {
+        PubSub.pub('module.a.api', {filter: 1});
+    })
+    PubSub.pub('module.a.isready');
+});
+
+require(['module/a', 'module/b'])
+```
+
+#### Solution 2 ( force publishing last data )
+Another way to fix this is to use the force publishing last data API.
+VP PubSub will always remember the last published data of a event.
+You can request the last published data via adding a `!` at the front of the event name.
+For example: `!module.a.ready`.
+Keep in mind that it *only* remembers the last published data, so this works great with ready events or events that contains counter data
+
+```javascript
+//module A
+define('module/a', ['vp-pubsub'], function (PubSub) {
+    PubSub.sub('module.a.api', function (data) {
+        console.log(data)
+    });
+    PubSub.pub('module.a.ready');
+});
+
+//module B
+define('module/b', ['vp-pubsub'], function (PubSub) {
+    PubSub.subonce('!module.a.ready', function () {
+        PubSub.pub('module.a.api', {filter: 1});
+    });
+});
+
+require(['module/a', 'module/b'])
 ```
