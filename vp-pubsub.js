@@ -91,16 +91,16 @@ limitations under the License.
                     }
                     //get event scope index
                     scopeIndex = indexOf(published[evnt].scopes, scope);
-                    if (~scopeIndex) {
+                    if (!~scopeIndex) {
                         scopeIndex = published[evnt].scopes.push(scope) - 1;
                     }
                     //update / add last called data to event scope
                     published[evnt].data[scopeIndex] = data;
                 }
-                function callAsync(sub, scope, data, originEvent) {
+                function callAsync(sub, thisArg, data, originEvent) {
                     setTimeout(function () {
                         if (sub.$$VPpubsubRemoved !== originEvent) {
-                            sub.call(scope, data, originEvent, sub);
+                            sub.call(thisArg, data, originEvent, sub);
                         }
                     }, 5);
                 }
@@ -170,7 +170,7 @@ limitations under the License.
                  * @param  {Function} sub  [description]
                  */
                 function publish (evnt, sub) {
-                    var index,
+                    var index = -1,
                         orgEvent = evnt;
                     //if the sub don't have 
                     if (!~evnt.indexOf('*')) {
@@ -193,7 +193,7 @@ limitations under the License.
                         }
                     }
                     //do we've found a event ?
-                    if (!~index) {
+                    if (~index) {
                         //call subscriber
                         sub.call(thisArg, published[orgEvent].data[index], orgEvent, sub);
                     }
@@ -229,9 +229,9 @@ limitations under the License.
             /**
              * Subscribe once to an event
              * @param  {String} evnt       you can't subscribe to a channel ( * )
-             * @param  {[type]} subscriber
-             * @param  {[type]} scope
-             * @param  {[type]} thisArg
+             * @param  {Function} subscriber
+             * @param  {*} scope
+             * @param  {*} thisArg
              */
             subonce: function (evnt, subscriber, scope, thisArg) {
                 //you can't use *
