@@ -119,9 +119,12 @@ limitations under the License.
                     //add to published 
                     addToPublished(evnt);
                     //wild card
+                    if (subscribers[evnt + '.*']) {
+                        subs = subs.concat(subscribers[evnt + '.*']);
+                    }
+                    //all other levels
                     evnt = evnt.split('.');
                     evntPart = evnt[0];
-                    //all other levels
                     for (var i = 1, max = evnt.length; i < max; i++) {
                         if (subscribers[evntPart + '.*']) {
                             subs = subs.concat(subscribers[evntPart + '.*']);
