@@ -26,6 +26,9 @@ VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscrib
 #### bower
 `bower install vp-pubsub  --save-dev`
 
+#### npm
+`npm install vp-pubsub`
+
 #### git
 `git clone https://github.com/schubergphilis/vp-pubsub.git`
 
@@ -41,6 +44,11 @@ VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscrib
 define(['/bower_components/vp-pubsub/vp-pubsub'], function (PubSub) {
 
 })
+```
+
+#### nodejs
+```javascript
+var PubSub = require('vp-pubsub');
 ```
 
 ## API

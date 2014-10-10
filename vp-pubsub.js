@@ -18,7 +18,7 @@ limitations under the License.
     // Montage Require
     if (typeof bootstrap === 'function') {
         bootstrap('promise', vpPubsub);
-    // CommonJS
+    // CommonJS & nodejs
     } else if (typeof exports === 'object') {
         module.exports = vpPubsub();
     // RequireJS
@@ -39,7 +39,19 @@ limitations under the License.
     /* jshint newcap: false */
     'use strict';
     var validSubscribe = /^!?(\*$|[a-z])([a-z0-9]*)(\.([a-z0-9]+|\*$))*(@[0-9a-z]+)?$/,
-        validPublish = /^[a-z]([a-z0-9]*)(\.[a-z0-9]+)*(@[0-9a-z]+)?$/;
+        validPublish = /^[a-z]([a-z0-9]*)(\.[a-z0-9]+)*(@[0-9a-z]+)?$/,
+        async = (function () {
+            var api = typeof window === 'undefined' ? process : window,
+                next =  api.requestAnimationFrame  || api.webkitRequestAnimationFrame || api.mozRequestAnimationFrame || api.nextTick;
+            //browser
+            if (next) {
+                return next;
+            }
+            //fake async
+            return function (callback) {
+                setTimeout(callback, 1000 / 60);
+            };
+        }());
     /**
      * Array indexOf for IE8
      * @param  {Array} arr
@@ -98,11 +110,11 @@ limitations under the License.
                     published[evnt].data[scopeIndex] = data;
                 }
                 function callAsync(sub, thisArg, data, originEvent) {
-                    setTimeout(function () {
+                    async(function () {
                         if (sub.$$VPpubsubRemoved !== originEvent) {
                             sub.call(thisArg, data, originEvent, sub);
                         }
-                    }, 5);
+                    });
                 }
                 //is event valid
                 if (validPublish.test(evnt)) {
