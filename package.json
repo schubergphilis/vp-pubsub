@@ -1,26 +1,28 @@
 {
   "name": "vp-pubsub",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "VP PubSub is a publish/subscribe library that supports message filtering",
   "main": "vp-pubsub.js",
   "directories": {
     "test": "tests"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/schubergphilis/vp-pubsub.git"
   },
   "keywords": [
-    "pubsub"
+    "pubsub",
+    "publish",
+    "subscribe",
+    "message",
+    "filtering"
   ],
   "author": "Victor Verhaagen <vverhaagen@schubergphilis.com>",
   "license": "Apache License v2.0",
   "bugs": {
     "url": "https://github.com/schubergphilis/vp-pubsub/issues"
   },
+  "readmeFilename": "README.md",
   "homepage": "https://github.com/schubergphilis/vp-pubsub",
   "devDependencies": {
     "jasmine-node": "^1.14.5"
