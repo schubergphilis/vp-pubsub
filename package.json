@@ -1,6 +1,6 @@
 {
   "name": "vp-pubsub",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "VP PubSub is a publish/subscribe library that supports message filtering",
   "main": "vp-pubsub.js",
   "directories": {
