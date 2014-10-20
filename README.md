@@ -11,7 +11,7 @@ VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscrib
 -   [Include](#include)
     - [Basic](#basic)
     - [AMD](#amd)
-    - [AMD](#nodejs)
+    - [nodejs](#nodejs)
 -   [API](#API)
     - [pub](#pub)
     - [sub](#sub)
