@@ -69,6 +69,9 @@ limitations under the License.
         }
         return -1;
     }
+    function isFunction (obj) {
+        return typeof obj === 'function';
+    }
     /**
      * VPpubsub module
      */
@@ -213,6 +216,10 @@ limitations under the License.
                         sub.call(thisArg, published[orgEvent].data[index], orgEvent, sub);
                     }
                 }
+                //check of subscriber is a function
+                if (!isFunction(subscriber)) {
+                    return;
+                }
                 //loop though all events
                 for (var i = 0, max = allEvnt.length; i < max; i++) {
                     parseEvnt = allEvnt[i];
@@ -249,6 +256,10 @@ limitations under the License.
              * @param  {*} thisArg
              */
             subonce: function (evnt, subscriber, scope, thisArg) {
+                //check of subscriber is a function
+                if (!isFunction(subscriber)) {
+                    return;
+                }
                 //you can't use *
                 if (!~evnt.indexOf('*')) {
                     api.sub(evnt, function (data, evnt, $$sub) {
@@ -265,6 +276,10 @@ limitations under the License.
              */
             unsub: function (evnt, subscriber, scope) {
                 var eventSubs = subscribers[evnt] || [];
+                 //check of subscriber is a function
+                if (!isFunction(subscriber)) {
+                    return;
+                }
                 for (var i = 0, max  = eventSubs.length; i < max; i++) {
                     if (eventSubs[i][0] === subscriber && (!eventSubs[i][1] || eventSubs[i][1] === scope)) {
                         subscriber.$$VPpubsubRemoved = evnt;

@@ -1,6 +1,6 @@
 {
   "name": "vp-pubsub",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "VP PubSub is a publish/subscribe library that supports message filtering",
   "main": "vp-pubsub.js",
   "directories": {
@@ -15,7 +15,11 @@
     "publish",
     "subscribe",
     "message",
-    "filtering"
+    "filtering",
+    "pub",
+    "sub",
+    "emitter",
+    "event"
   ],
   "author": "Victor Verhaagen <vverhaagen@schubergphilis.com>",
   "license": "Apache License v2.0",
