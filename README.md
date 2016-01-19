@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/vp-pubsub.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/vp-pubsub/)
+
 VP PubSub
 ======
 VP PubSub is a [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscribe) library that supports [message filtering](http://en.wikipedia.org/wiki/Publish–subscribe_pattern#Message_filtering)
