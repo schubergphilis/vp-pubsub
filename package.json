@@ -10,6 +10,9 @@
     "type": "git",
     "url": "https://github.com/schubergphilis/vp-pubsub.git"
   },
+  "scripts": {
+    "test": "gulp test"
+  },
   "keywords": [
     "pubsub",
     "publish",
@@ -29,6 +32,13 @@
   "readmeFilename": "README.md",
   "homepage": "https://github.com/schubergphilis/vp-pubsub",
   "devDependencies": {
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.3",
     "jasmine-node": "^1.14.5"
+  },
+  "dependencies": {
+    "gulp-jasmine": "^2.3.0"
   }
 }

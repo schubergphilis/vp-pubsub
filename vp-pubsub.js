@@ -69,6 +69,11 @@ limitations under the License.
         }
         return -1;
     }
+    /**
+     * isFunction the given object a function
+     * @param  {*}  obj     to test
+     * @return {Boolean}    returns true if given object is an function
+     */
     function isFunction (obj) {
         return typeof obj === 'function';
     }
@@ -131,7 +136,7 @@ limitations under the License.
                     if (evnt !== originEvent && subscribers[evnt]) {
                         subs = subs.concat(subscribers[evnt]);
                     }
-                    //add to published 
+                    //add to published
                     addToPublished(evnt);
                     //wild card
                     if (subscribers[evnt + '.*']) {
@@ -190,7 +195,7 @@ limitations under the License.
                 function publish (evnt, sub) {
                     var index = -1,
                         orgEvent = evnt;
-                    //if the sub don't have 
+                    //if the sub don't have
                     if (!~evnt.indexOf('*')) {
                         //check of event already is published for this scope
                         if (published[evnt]) {
@@ -266,6 +271,89 @@ limitations under the License.
                         api.unsub(evnt, $$sub, scope);
                         subscriber.call(thisArg, data, evnt, subscriber);
                     }, scope, thisArg);
+                }
+            },
+            /**
+             * Subscribe to a event via promise like API
+             * @param {string}     evnt       The event where you want to subscribe
+             * @param {*}          [scope]    Scope can be used to only subscribe to events that are in that scope
+             * @param {*}          [thisArg]  The `this` scope  of the subscriber
+             * @return {Object} thenable object.
+             */
+            on: function (evnt, scope, thisArg) {
+                var value,
+                    callbacks = [],
+                    called, once;
+                /**
+                 * unsubscribe
+                 */
+                function unsub () {
+                    api.unsub(evnt, sub, scope, thisArg)
+                }
+                /**
+                 * then
+                 */
+                function then () {
+                    var max = callbacks.length;
+                    //check of it should only run only once
+                    if (called && once) {
+                        return;
+                    }
+                    //check of we have data to call all callbacks
+                    if (max && value) {
+                        //loop though all callbacks
+                        for (var i = 0; i < max; i++) {
+                            callbacks[i].apply(thisArg, value);
+                        }
+                        //set called
+                        called = true;
+                        //if run only once unsub
+                        if (once) {
+                            unsub();
+                        }
+                    }
+                }
+                /**
+                 * Subscribe
+                 * @param  {*} data
+                 * @param  {String} evnt
+                 * @param  {Function} $$sub
+                 * @see VPpubsub.sub
+                 */
+                function sub (data, evnt, $$sub) {
+                    value = [data, evnt, $$sub];
+                    then();
+                }
+                //sub
+                api.sub(evnt, sub, scope, thisArg);
+                //add off method to the promise
+                return {
+                    /**
+                     * Unsubscribe to the current event
+                     */
+                    off: unsub,
+                    /**
+                     * then will run fulfill when the event is publish
+                     * @param  {Function} fulfill function that should run after the event is publish
+                     */
+                    then: function (fulfill) {
+                        //check of fullfill is  a function
+                        if (isFunction(fulfill)) {
+                            //push in callback queue
+                            callbacks.push(fulfill);
+                        }
+                        //run then
+                        then();
+                        //return off
+                        return {
+                            off: function () {
+                                once = true;
+                                if (called) {
+                                    unsub();
+                                }
+                            }
+                        };
+                    }
                 }
             },
             /**
